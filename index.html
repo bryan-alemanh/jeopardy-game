@@ -54,10 +54,32 @@
         <div id="editSection" class="edit-section" style="display:none;">
             <h2>Edit Questions</h2>
             <div class="edit-controls">
-                <button id="addCategoryBtn" class="btn btn-primary">Add Category</button>
+                <button id="addCategoryBtn" class="btn btn-primary">+ Add Category</button>
+                <select id="categoryPresetBtn" class="btn btn-secondary">
+                    <option value="">Choose Template</option>
+                    <option value="standard">Standard (100-500)</option>
+                    <option value="double">Double Jeopardy (200-1000)</option>
+                    <option value="final">Final Jeopardy (1000)</option>
+                    <option value="custom">Custom Values</option>
+                </select>
                 <button id="exportCsvBtn" class="btn btn-secondary">Export CSV</button>
                 <button id="exitEditBtn" class="btn btn-danger">Exit Edit Mode</button>
             </div>
+
+            <!-- Custom Values Template Modal -->
+            <div id="customValuesModal" class="modal">
+                <div class="modal-content">
+                    <button class="close-btn" id="closeCustomModal">&times;</button>
+                    <h2>Set Custom Question Values</h2>
+                    <p>Enter 5 values separated by commas (e.g., 50,100,150,200,250)</p>
+                    <input type="text" id="customValuesInput" placeholder="100,200,300,400,500" class="custom-values-input">
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn btn-primary" id="applyCustomValuesBtn">Apply to New Category</button>
+                        <button class="btn btn-secondary" id="closeCustomValuesBtn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="editBoard" class="edit-board"></div>
         </div>
 

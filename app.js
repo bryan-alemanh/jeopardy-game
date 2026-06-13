@@ -3,6 +3,7 @@
 const App = (() => {
     let categories = [];
     let currentEditingCategory = null;
+    let selectedPreset = null;
 
     // DOM Elements
     const elements = {
@@ -29,9 +30,15 @@ const App = (() => {
         csvInput: document.getElementById('csvInput'),
         uploadCsvBtn: document.getElementById('uploadCsvBtn'),
         addCategoryBtn: document.getElementById('addCategoryBtn'),
+        categoryPresetBtn: document.getElementById('categoryPresetBtn'),
         exportCsvBtn: document.getElementById('exportCsvBtn'),
         exitEditBtn: document.getElementById('exitEditBtn'),
-        editBoard: document.getElementById('editBoard')
+        editBoard: document.getElementById('editBoard'),
+        customValuesModal: document.getElementById('customValuesModal'),
+        closeCustomModal: document.getElementById('closeCustomModal'),
+        customValuesInput: document.getElementById('customValuesInput'),
+        applyCustomValuesBtn: document.getElementById('applyCustomValuesBtn'),
+        closeCustomValuesBtn: document.getElementById('closeCustomValuesBtn')
     };
 
     function initializeEventListeners() {
@@ -45,8 +52,12 @@ const App = (() => {
         elements.closeImportModal.addEventListener('click', closeImportModal);
         elements.uploadCsvBtn.addEventListener('click', uploadCSV);
         elements.addCategoryBtn.addEventListener('click', addNewCategory);
+        elements.categoryPresetBtn.addEventListener('change', handlePresetSelection);
         elements.exportCsvBtn.addEventListener('click', exportData);
         elements.exitEditBtn.addEventListener('click', exitEditMode);
+        elements.closeCustomModal.addEventListener('click', closeCustomValuesModal);
+        elements.closeCustomValuesBtn.addEventListener('click', closeCustomValuesModal);
+        elements.applyCustomValuesBtn.addEventListener('click', applyCustomValues);
 
         // Close modal when clicking outside
         window.addEventListener('click', (e) => {
@@ -55,6 +66,9 @@ const App = (() => {
             }
             if (e.target === elements.importModal) {
                 closeImportModal();
+            }
+            if (e.target === elements.customValuesModal) {
+                closeCustomValuesModal();
             }
         });
     }
@@ -176,6 +190,50 @@ const App = (() => {
         });
     }
 
+    function handlePresetSelection(e) {
+        const preset = e.target.value;
+        elements.categoryPresetBtn.value = '';
+
+        if (!preset) return;
+
+        if (preset === 'custom') {
+            openCustomValuesModal();
+        } else {
+            const presets = Database.getValuePresets();
+            if (presets[preset]) {
+                Database.setCustomValues(presets[preset]);
+                addNewCategory();
+            }
+        }
+    }
+
+    function openCustomValuesModal() {
+        elements.customValuesInput.value = Database.getCustomValues().join(',');
+        elements.customValuesModal.classList.add('active');
+    }
+
+    function closeCustomValuesModal() {
+        elements.customValuesModal.classList.remove('active');
+        elements.customValuesInput.value = '';
+    }
+
+    function applyCustomValues() {
+        const input = elements.customValuesInput.value.trim();
+        const values = input.split(',').map(v => {
+            const num = parseInt(v.trim());
+            return isNaN(num) ? null : num;
+        }).filter(v => v !== null);
+
+        if (values.length === 0) {
+            alert('Please enter valid numbers separated by commas');
+            return;
+        }
+
+        Database.setCustomValues(values);
+        closeCustomValuesModal();
+        addNewCategory();
+    }
+
     function enterEditMode() {
         categories = Database.getAllData().categories;
         elements.gameSection.style.display = 'none';
@@ -197,13 +255,26 @@ const App = (() => {
             categoryDiv.className = 'edit-category';
 
             const titleDiv = document.createElement('h3');
-            titleDiv.innerHTML = `
-                <input type="text" value="${category.name}" data-category-id="${category.id}" class="category-name-input" />
-                <button class="btn btn-danger" data-category-id="${category.id}" onclick="App.deleteCategory('${category.id}')">Delete</button>
-            `;
-            titleDiv.querySelector('.category-name-input').addEventListener('change', (e) => {
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.value = category.name;
+            nameInput.className = 'category-header-input';
+            nameInput.addEventListener('change', (e) => {
                 Database.updateCategoryName(category.id, e.target.value);
+                category.name = e.target.value;
             });
+
+            const actionDiv = document.createElement('div');
+            actionDiv.className = 'category-actions';
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'btn btn-danger btn-sm';
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.addEventListener('click', () => App.deleteCategory(category.id));
+
+            actionDiv.appendChild(deleteBtn);
+            titleDiv.appendChild(nameInput);
+            titleDiv.appendChild(actionDiv);
             categoryDiv.appendChild(titleDiv);
 
             const questionsDiv = document.createElement('div');
@@ -212,24 +283,58 @@ const App = (() => {
             category.questions.forEach(q => {
                 const questionDiv = document.createElement('div');
                 questionDiv.className = 'edit-question';
-                questionDiv.innerHTML = `
-                    <label>Value: $${q.value}</label>
-                    <label>Question:</label>
-                    <input type="text" value="${q.question}" class="question-input" data-category-id="${category.id}" data-value="${q.value}" />
-                    <label>Answer:</label>
-                    <input type="text" value="${q.answer}" class="answer-input" data-category-id="${category.id}" data-value="${q.value}" />
-                `;
 
-                const questionInput = questionDiv.querySelector('.question-input');
-                const answerInput = questionDiv.querySelector('.answer-input');
+                const valueLabel = document.createElement('label');
+                valueLabel.textContent = 'Value:';
 
-                questionInput.addEventListener('change', (e) => {
-                    updateQuestion(category.id, q.value, e.target.value, answerInput.value);
-                });
+                const valueInput = document.createElement('input');
+                valueInput.type = 'number';
+                valueInput.value = q.value;
+                valueInput.className = 'question-value-input';
 
-                answerInput.addEventListener('change', (e) => {
-                    updateQuestion(category.id, q.value, questionInput.value, e.target.value);
-                });
+                const questionLabel = document.createElement('label');
+                questionLabel.textContent = 'Question:';
+
+                const questionInput = document.createElement('input');
+                questionInput.type = 'text';
+                questionInput.value = q.question;
+                questionInput.className = 'question-input';
+                questionInput.placeholder = 'Enter question text';
+                questionInput.setAttribute('data-category-id', category.id);
+                questionInput.setAttribute('data-value', q.value);
+
+                const answerLabel = document.createElement('label');
+                answerLabel.textContent = 'Answer:';
+
+                const answerInput = document.createElement('input');
+                answerInput.type = 'text';
+                answerInput.value = q.answer;
+                answerInput.className = 'answer-input';
+                answerInput.placeholder = 'Enter answer text';
+                answerInput.setAttribute('data-category-id', category.id);
+                answerInput.setAttribute('data-value', q.value);
+
+                const saveUpdate = () => {
+                    const newValue = parseInt(valueInput.value);
+                    if (isNaN(newValue) || newValue <= 0) {
+                        valueInput.value = q.value;
+                        alert('Please enter a valid positive number');
+                        return;
+                    }
+                    updateQuestion(category.id, q.value, newValue, questionInput.value, answerInput.value);
+                    q.value = newValue;
+                };
+
+                valueInput.addEventListener('change', saveUpdate);
+                questionInput.addEventListener('change', saveUpdate);
+                answerInput.addEventListener('change', saveUpdate);
+
+                questionDiv.appendChild(valueLabel);
+                questionDiv.appendChild(valueInput);
+                questionDiv.appendChild(questionLabel);
+                questionDiv.appendChild(questionInput);
+                questionDiv.appendChild(answerLabel);
+                questionDiv.appendChild(answerInput);
 
                 questionsDiv.appendChild(questionDiv);
             });
@@ -248,9 +353,9 @@ const App = (() => {
         }
     }
 
-    function updateQuestion(categoryId, value, question, answer) {
+    function updateQuestion(categoryId, oldValue, newValue, question, answer) {
         if (question.trim() && answer.trim()) {
-            Database.updateQuestion(categoryId, value, question, answer);
+            Database.updateQuestionValue(categoryId, oldValue, newValue, question, answer);
         }
     }
 

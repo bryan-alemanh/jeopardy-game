@@ -6,6 +6,8 @@
     --success-color: #28a745;
     --danger-color: #dc3545;
     --info-color: #17a2b8;
+    --warning-color: #ffc107;
+    --border-radius: 5px;
 }
 
 * {
@@ -49,7 +51,7 @@ header h1 {
 .btn {
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     cursor: pointer;
     font-size: 1rem;
     font-weight: bold;
@@ -103,6 +105,15 @@ header h1 {
 
 .btn-info:hover {
     background-color: #138496;
+}
+
+.btn-warning {
+    background-color: var(--warning-color);
+    color: #000;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
 }
 
 .game-section {
@@ -210,6 +221,8 @@ header h1 {
     width: 90%;
     position: relative;
     animation: slideIn 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 @keyframes slideIn {
@@ -305,9 +318,19 @@ header h1 {
     flex-wrap: wrap;
 }
 
+.edit-controls select,
+.edit-controls input {
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    border: 2px solid var(--secondary-color);
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    font-size: 1rem;
+}
+
 .edit-board {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 15px;
 }
 
@@ -315,7 +338,13 @@ header h1 {
     background: rgba(0, 0, 0, 0.5);
     border: 2px solid var(--secondary-color);
     padding: 20px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.edit-category:hover {
+    border-color: var(--warning-color);
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
 }
 
 .edit-category h3 {
@@ -324,6 +353,29 @@ header h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.category-header-input {
+    flex: 1;
+    min-width: 150px;
+    padding: 8px;
+    border: 1px solid var(--secondary-color);
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--light-text);
+}
+
+.category-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.85rem;
 }
 
 .edit-questions {
@@ -336,37 +388,101 @@ header h1 {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    padding: 10px;
+    padding: 12px;
     background: rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--info-color);
+    transition: all 0.2s ease;
+}
+
+.edit-question:hover {
+    border-left-color: var(--secondary-color);
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .edit-question input {
     padding: 8px;
     border: 1px solid var(--secondary-color);
-    border-radius: 3px;
+    border-radius: var(--border-radius);
     font-size: 0.9rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--light-text);
+}
+
+.edit-question input:focus {
+    outline: none;
+    border-color: var(--warning-color);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .edit-question label {
     font-size: 0.85rem;
     color: var(--secondary-color);
+    font-weight: bold;
+}
+
+.custom-values-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--secondary-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--light-text);
+    margin: 10px 0;
+}
+
+.custom-values-input:focus {
+    outline: none;
+    border-color: var(--warning-color);
+}
+
+.question-value-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--secondary-color);
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--light-text);
+}
+
+.question-value-display {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    padding: 8px;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: var(--border-radius);
+}
+
+.error-message {
+    color: var(--danger-color);
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.success-message {
+    color: var(--success-color);
+    font-size: 0.85rem;
+    margin-top: 5px;
 }
 
 pre {
     background: rgba(0, 0, 0, 0.5);
     padding: 15px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     overflow-x: auto;
     margin: 15px 0;
     font-size: 0.9rem;
+    border: 1px solid var(--secondary-color);
 }
 
 input[type="file"] {
     margin: 15px 0;
     padding: 10px;
     border: 2px solid var(--secondary-color);
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     color: var(--light-text);
 }
 
@@ -391,5 +507,18 @@ input[type="file"] {
 
     .question-text {
         font-size: 1.4rem;
+    }
+
+    .edit-board {
+        grid-template-columns: 1fr;
+    }
+
+    .edit-controls {
+        flex-direction: column;
+    }
+
+    .edit-controls button,
+    .edit-controls select {
+        width: 100%;
     }
 }
