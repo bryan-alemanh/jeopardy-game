@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeopardy Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Jeopardy!</h1>
+            <div class="header-controls">
+                <button id="newGameBtn" class="btn btn-primary">New Game</button>
+                <button id="importBtn" class="btn btn-secondary">Import CSV</button>
+                <button id="editModeBtn" class="btn btn-secondary">Edit Questions</button>
+            </div>
+        </header>
+
+        <!-- Game Board Section -->
+        <div id="gameSection" class="game-section">
+            <div id="scoreboard" class="scoreboard">
+                <div class="score-container">
+                    <h3>Score</h3>
+                    <p id="score" class="score-value">$0</p>
+                </div>
+            </div>
+
+            <div id="board" class="board"></div>
+        </div>
+
+        <!-- Question Modal -->
+        <div id="questionModal" class="modal">
+            <div class="modal-content">
+                <button class="close-btn" id="closeModal">&times;</button>
+                <div class="question-display">
+                    <div class="category-label" id="categoryLabel"></div>
+                    <div class="value-label" id="valueLabel"></div>
+                    <div class="question-text" id="questionText"></div>
+                </div>
+                <div class="answer-display" id="answerDisplay" style="display:none;">
+                    <p>What is:</p>
+                    <div class="answer-text" id="answerText"></div>
+                    <div class="answer-buttons">
+                        <button class="btn btn-success" id="correctBtn">Correct</button>
+                        <button class="btn btn-danger" id="incorrectBtn">Incorrect</button>
+                    </div>
+                </div>
+                <button class="btn btn-info" id="revealAnswerBtn" style="margin-top: 20px;">Reveal Answer</button>
+            </div>
+        </div>
+
+        <!-- Edit Mode Section -->
+        <div id="editSection" class="edit-section" style="display:none;">
+            <h2>Edit Questions</h2>
+            <div class="edit-controls">
+                <button id="addCategoryBtn" class="btn btn-primary">Add Category</button>
+                <button id="exportCsvBtn" class="btn btn-secondary">Export CSV</button>
+                <button id="exitEditBtn" class="btn btn-danger">Exit Edit Mode</button>
+            </div>
+            <div id="editBoard" class="edit-board"></div>
+        </div>
+
+        <!-- Import Modal -->
+        <div id="importModal" class="modal">
+            <div class="modal-content">
+                <button class="close-btn" id="closeImportModal">&times;</button>
+                <h2>Import CSV File</h2>
+                <p>Upload a CSV file with the following format:</p>
+                <pre>Category,100,200,300,400,500
+Category1,Question1,Question2,...
+Category1,Answer1,Answer2,...</pre>
+                <input type="file" id="csvInput" accept=".csv">
+                <button id="uploadCsvBtn" class="btn btn-primary">Upload CSV</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="database.js"></script>
+    <script src="game.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
