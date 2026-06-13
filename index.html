@@ -3,134 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List Application</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Jeopardy Game</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-check-circle"></i> My To-Do List</h1>
-            <p class="subtitle">Stay organized and track your tasks</p>
+            <h1>Jeopardy!</h1>
+            <div class="header-controls">
+                <button id="newGameBtn" class="btn btn-primary">New Game</button>
+                <button id="importBtn" class="btn btn-secondary">Import CSV</button>
+                <button id="editModeBtn" class="btn btn-secondary">Edit Questions</button>
+            </div>
         </header>
 
-        <main>
-            <!-- Input Section -->
-            <div class="input-section">
-                <div class="input-group">
-                    <input 
-                        type="text" 
-                        id="taskInput" 
-                        placeholder="Add a new task..."
-                        class="task-input"
-                    >
-                    <select id="prioritySelect" class="priority-select">
-                        <option value="low">Low</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                    <button id="addBtn" class="add-btn">
-                        <i class="fas fa-plus"></i> Add Task
-                    </button>
+        <!-- Game Board Section -->
+        <div id="gameSection" class="game-section">
+            <div id="scoreboard" class="scoreboard">
+                <div class="score-container">
+                    <h3>Score</h3>
+                    <p id="score" class="score-value">$0</p>
                 </div>
             </div>
 
-            <!-- Filter Section -->
-            <div class="filter-section">
-                <div class="filter-buttons">
-                    <button class="filter-btn active" data-filter="all">
-                        <i class="fas fa-list"></i> All
-                    </button>
-                    <button class="filter-btn" data-filter="active">
-                        <i class="fas fa-circle"></i> Active
-                    </button>
-                    <button class="filter-btn" data-filter="completed">
-                        <i class="fas fa-check"></i> Completed
-                    </button>
-                    <button class="filter-btn" data-filter="high">
-                        <i class="fas fa-fire"></i> High Priority
-                    </button>
-                </div>
-                <div class="stats">
-                    <span id="totalTasks" class="stat-item">
-                        <i class="fas fa-tasks"></i> <span id="totalCount">0</span> Total
-                    </span>
-                    <span id="completedTasks" class="stat-item">
-                        <i class="fas fa-check-circle"></i> <span id="completedCount">0</span> Done
-                    </span>
-                </div>
-            </div>
+            <div id="board" class="board"></div>
+        </div>
 
-            <!-- Tasks List -->
-            <div class="tasks-section">
-                <div id="tasksList" class="tasks-list">
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>No tasks yet. Add one to get started!</p>
+        <!-- Question Modal -->
+        <div id="questionModal" class="modal">
+            <div class="modal-content">
+                <button class="close-btn" id="closeModal">&times;</button>
+                <div class="question-display">
+                    <div class="category-label" id="categoryLabel"></div>
+                    <div class="value-label" id="valueLabel"></div>
+                    <div class="question-text" id="questionText"></div>
+                </div>
+                <div class="answer-display" id="answerDisplay" style="display:none;">
+                    <p>What is:</p>
+                    <div class="answer-text" id="answerText"></div>
+                    <div class="answer-buttons">
+                        <button class="btn btn-success" id="correctBtn">Correct</button>
+                        <button class="btn btn-danger" id="incorrectBtn">Incorrect</button>
                     </div>
                 </div>
+                <button class="btn btn-info" id="revealAnswerBtn" style="margin-top: 20px;">Reveal Answer</button>
             </div>
+        </div>
 
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button id="clearCompletedBtn" class="action-btn clear-btn">
-                    <i class="fas fa-trash"></i> Clear Completed
-                </button>
-                <button id="clearAllBtn" class="action-btn delete-btn">
-                    <i class="fas fa-broom"></i> Clear All
-                </button>
-                <button id="exportBtn" class="action-btn export-btn">
-                    <i class="fas fa-download"></i> Export
-                </button>
+        <!-- Edit Mode Section -->
+        <div id="editSection" class="edit-section" style="display:none;">
+            <h2>Edit Questions</h2>
+            <div class="edit-controls">
+                <button id="addCategoryBtn" class="btn btn-primary">Add Category</button>
+                <button id="exportCsvBtn" class="btn btn-secondary">Export CSV</button>
+                <button id="exitEditBtn" class="btn btn-danger">Exit Edit Mode</button>
             </div>
-        </main>
-    </div>
+            <div id="editBoard" class="edit-board"></div>
+        </div>
 
-    <!-- Edit Modal -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Edit Task</h2>
-                <button class="close-btn" id="closeEditModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <input type="text" id="editTaskInput" class="edit-input" placeholder="Task description">
-                <select id="editPrioritySelect" class="priority-select">
-                    <option value="low">Low Priority</option>
-                    <option value="medium">Medium Priority</option>
-                    <option value="high">High Priority</option>
-                </select>
-            </div>
-            <div class="modal-footer">
-                <button id="cancelEditBtn" class="btn-secondary">Cancel</button>
-                <button id="saveEditBtn" class="btn-primary">Save Changes</button>
+        <!-- Import Modal -->
+        <div id="importModal" class="modal">
+            <div class="modal-content">
+                <button class="close-btn" id="closeImportModal">&times;</button>
+                <h2>Import CSV File</h2>
+                <p>Upload a CSV file with the following format:</p>
+                <pre>Category,100,200,300,400,500
+Category1,Question1,Question2,...
+Category1,Answer1,Answer2,...</pre>
+                <input type="file" id="csvInput" accept=".csv">
+                <button id="uploadCsvBtn" class="btn btn-primary">Upload CSV</button>
             </div>
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
-    <div id="confirmModal" class="modal">
-        <div class="modal-content modal-small">
-            <div class="modal-header">
-                <h2 id="confirmTitle">Confirm Action</h2>
-                <button class="close-btn" id="closeConfirmModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p id="confirmMessage">Are you sure?</p>
-            </div>
-            <div class="modal-footer">
-                <button id="confirmCancelBtn" class="btn-secondary">Cancel</button>
-                <button id="confirmActionBtn" class="btn-primary">Confirm</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="toast"></div>
-
-    <script src="storage.js"></script>
-    <script src="task.js"></script>
-    <script src="ui.js"></script>
+    <script src="utils.js"></script>
+    <script src="database.js"></script>
+    <script src="game.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
