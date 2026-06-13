@@ -1,152 +1,234 @@
-# Jeopardy Game
+# To-Do List Application
 
-A fully functional, offline-capable Jeopardy game built with HTML, CSS, and JavaScript. Store your game data in a local CSV database.
+A fully-featured to-do list application with local storage functionality. Organize, manage, and track your tasks with ease.
 
 ## Features
 
-✅ **Offline Gameplay** - Play without internet connection
-✅ **CSV Database** - Import and export questions using CSV files
-✅ **Custom Categories** - Add, edit, and delete custom categories and questions
-✅ **Score Tracking** - Keep track of your score throughout the game
-✅ **Responsive Design** - Works on desktop and mobile devices
-✅ **Local Storage** - Game data persists in browser's local storage
-✅ **Easy Management** - User-friendly interface for managing questions
+✅ **Task Management**
+- Add, edit, and delete tasks
+- Mark tasks as complete/incomplete
+- Set priority levels (Low, Medium, High)
+- View task creation time (relative time display)
+
+✅ **Filtering & Sorting**
+- Filter by: All, Active, Completed, High Priority
+- Real-time task statistics
+- Color-coded priority indicators
+
+✅ **Local Storage**
+- All tasks persist in browser's localStorage
+- No internet connection required
+- Data survives browser restarts
+
+✅ **Import/Export**
+- Export tasks as JSON file
+- Backup your tasks
+- Download with timestamp
+
+✅ **User Interface**
+- Clean, modern design
+- Responsive on all devices
+- Smooth animations and transitions
+- Toast notifications for feedback
+- Modal dialogs for confirmations
+
+✅ **Accessibility**
+- Keyboard support (Enter to add task)
+- ARIA labels for screen readers
+- Font Awesome icons
+- High contrast colors
 
 ## Quick Start
 
-1. Open `index.html` in your web browser
-2. Click "New Game" to start playing
-3. Click on any question tile to answer
-4. Reveal the answer and select if it was correct or incorrect
-5. Your score updates automatically
+1. **Open the app**: Simply open `index.html` in your web browser
+2. **Add a task**: Type in the input field, select priority, and click "Add Task" or press Enter
+3. **Manage tasks**: 
+   - Check the checkbox to mark complete
+   - Click edit icon to modify
+   - Click delete icon to remove
+4. **Filter tasks**: Use filter buttons to view specific task types
+5. **Export tasks**: Click "Export" to download your tasks as JSON
 
-## Managing Questions
+## Usage Guide
 
-### Add New Category
-1. Click "Edit Questions"
-2. Click "Add Category"
-3. Enter the category name
-4. Edit the questions and answers
+### Adding Tasks
+- Enter task description
+- Select priority level (Low, Medium, High)
+- Click "Add Task" or press Enter
 
-### Import CSV
-1. Click "Import CSV"
-2. Select your CSV file with the proper format (see below)
-3. Click "Upload CSV"
+### Editing Tasks
+- Click the edit (pencil) icon on any task
+- Modify the task text and priority
+- Click "Save Changes" to update
 
-### Export CSV
-1. Click "Edit Questions"
-2. Click "Export CSV"
-3. Your questions will be downloaded as a CSV file
+### Filtering
+- **All**: View all tasks
+- **Active**: View incomplete tasks
+- **Completed**: View finished tasks
+- **High Priority**: View only high-priority items
 
-## CSV Format
+### Clearing Tasks
+- **Clear Completed**: Remove all finished tasks
+- **Clear All**: Delete all tasks (with confirmation)
 
-The CSV format should follow this structure:
-
-```
-Category Name,100,200,300,400,500
-Category Name,Question 1,Question 2,Question 3,Question 4,Question 5
-Category Name,Answer 1,Answer 2,Answer 3,Answer 4,Answer 5
-```
-
-### Example:
-```
-Literature,100,200,300,400,500
-Literature,Author of Pride and Prejudice,Author of Great Gatsby,Author of To Kill a Mockingbird,Author of 1984,Author of Harry Potter
-Literature,Jane Austen,F. Scott Fitzgerald,Harper Lee,George Orwell,J.K. Rowling
-```
+### Exporting
+- Click "Export" to download tasks as JSON
+- File includes all task details
+- Timestamped filename for easy organization
 
 ## File Structure
 
-- `index.html` - Main HTML file
-- `styles.css` - Styling and layout
-- `utils.js` - Utility functions (CSV parsing, file operations, etc.)
-- `database.js` - Data management and local storage
-- `game.js` - Game logic and state management
-- `app.js` - Application controller and UI management
-- `sample-data.csv` - Sample CSV file for import testing
+```
+.
+├── index.html       # Main HTML file
+├── styles.css       # Styling and layout
+├── storage.js       # Local storage management
+├── task.js         # Task utilities and helpers
+├── ui.js           # UI rendering and event handling
+├── app.js          # Application initialization
+└── README.md       # This file
+```
 
 ## How It Works
 
-### Data Flow
+### Architecture
 
-1. **Database** (`database.js`) - Manages all data, stores in browser's localStorage
-2. **Game** (`game.js`) - Handles game state, scoring, and question selection
-3. **App** (`app.js`) - Controls UI and user interactions
-4. **Utils** (`utils.js`) - Provides helper functions
+1. **Storage Layer** (`storage.js`)
+   - Manages localStorage operations
+   - Save, load, and export tasks
+   - Handles data persistence
 
-### Local Storage
+2. **Task Logic** (`task.js`)
+   - Task creation and manipulation
+   - Date formatting utilities
+   - Task validation
 
-All game data is stored in the browser's localStorage under the key `jeopardy_game_data`. This means:
-- Your data persists even after closing the browser
-- No server or internet connection needed
-- Data is stored locally on your device
+3. **UI Layer** (`ui.js`)
+   - Renders task elements
+   - Handles user interactions
+   - Shows notifications and modals
+   - Manages filters and sorting
 
-## Keyboard Shortcuts (Coming Soon)
+4. **Application** (`app.js`)
+   - Initializes the application
+   - Coordinates between modules
 
-- `ESC` - Close modal
-- `R` - Reveal answer
-- `C` - Mark correct
-- `I` - Mark incorrect
+### Data Structure
+
+Each task is stored as:
+```javascript
+{
+  id: "unique-timestamp-based-id",
+  text: "Task description",
+  priority: "low|medium|high",
+  completed: false,
+  createdDate: "2024-01-15T10:30:00.000Z"
+}
+```
+
+## Local Storage Details
+
+- **Storage Key**: `todo_list_tasks`
+- **Format**: JSON array of task objects
+- **Limit**: ~5-10 MB per domain (varies by browser)
+- **Persistence**: Survives browser restarts and crashes
+
+## Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| Enter | Add new task (when input focused) |
+| Escape | Close modals |
 
 ## Browser Compatibility
 
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
 - Mobile browsers (iOS Safari, Chrome Mobile)
-
-## Tips for Adding Questions
-
-1. Keep questions concise but clear
-2. Format answers in "What is...?" response format for authenticity
-3. Ensure answer values match the monetary amounts (100, 200, 300, 400, 500)
-4. You can use any values you want, not just the standard amounts
-5. Special characters in CSV should be enclosed in quotes
 
 ## Customization
 
 ### Change Colors
-Edit the CSS variables in `styles.css`:
+Edit CSS variables in `styles.css`:
 ```css
 :root {
-    --primary-color: #1f3a93;      /* Main blue */
-    --secondary-color: #ffd700;    /* Gold */
-    --dark-bg: #000080;            /* Dark blue */
-    /* ... more colors ... */
+    --primary-color: #6366f1;
+    --danger-color: #ef4444;
+    --success-color: #10b981;
+    /* ... more variables ... */
 }
 ```
 
-### Change Default Values
-Edit the `DEFAULT_DATA` in `database.js` to set different question values or categories.
+### Add New Priority Levels
+1. Update priority select options in `index.html`
+2. Add CSS styling in `styles.css`
+3. Update badge styling for new priority
 
-## License
+### Change Storage Key
+Update `STORAGE_KEY` in `storage.js` to use a different localStorage key
 
-Free to use and modify.
+## Tips & Tricks
 
-## Troubleshooting
+1. **Organize by Priority**: Use High Priority filter to focus on important tasks
+2. **Quick Add**: Press Enter instead of clicking Add Task
+3. **Batch Cleanup**: Use Clear Completed to remove done tasks
+4. **Backup**: Export tasks regularly to have a backup
+5. **Multiple Lists**: Create separate instances with different storage keys
 
-### CSV Won't Import
-- Ensure the CSV format matches the specification
-- Check that special characters are properly escaped
-- Try the sample-data.csv file first to verify the format
+## Limitations
 
-### Data Not Saving
-- Check if localStorage is enabled in your browser
-- Try clearing browser cache and refreshing
-- Ensure you have enough storage space
-
-### Questions Not Showing
-- Refresh the page (Ctrl+F5 or Cmd+Shift+R)
-- Check the browser console for errors
-- Verify the CSV import was successful
+- LocalStorage limited to ~5-10 MB
+- No cloud synchronization
+- No password protection
+- No recurring tasks (yet)
+- No task categories (coming soon)
 
 ## Future Enhancements
 
-- [ ] Multiple players support
-- [ ] Timer for questions
-- [ ] Question categories search
-- [ ] Statistics and analytics
-- [ ] Keyboard shortcuts
-- [ ] Sound effects
-- [ ] Different difficulty levels
-- [ ] Team mode
+- [ ] Task categories/tags
+- [ ] Recurring tasks
+- [ ] Due dates and reminders
+- [ ] Multiple lists/projects
+- [ ] Cloud sync via service
+- [ ] Drag and drop reordering
+- [ ] Task subtasks
+- [ ] Dark mode
+- [ ] Search functionality
+- [ ] Import from JSON
+
+## Troubleshooting
+
+### Tasks not saving
+- Check if localStorage is enabled in browser
+- Ensure enough storage space available
+- Clear browser cache and try again
+- Check browser console for errors
+
+### Tasks disappeared
+- Check if you cleared browser data
+- Try opening in private/incognito mode
+- Verify localStorage is not disabled
+- Check storage quota with DevTools
+
+### Export not working
+- Disable browser ad blockers
+- Check if pop-ups are blocked
+- Try different browser
+- Check browser console for errors
+
+## Performance
+
+- Efficient re-rendering
+- Minimal DOM operations
+- Fast localStorage operations
+- Smooth animations
+- Responsive on all devices
+
+## License
+
+Free to use and modify for personal and commercial projects.
+
+## Support
+
+For issues or suggestions, open an issue or submit a pull request.
