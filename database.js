@@ -62,7 +62,16 @@ const Database = (() => {
         ]
     };
 
+    // Value presets for templates
+    const VALUE_PRESETS = {
+        standard: [100, 200, 300, 400, 500],
+        double: [200, 400, 600, 800, 1000],
+        final: [1000],
+        custom: null
+    };
+
     let data = loadData();
+    let customValues = VALUE_PRESETS.standard;
 
     function loadData() {
         const stored = localStorage.getItem(STORAGE_KEY);
@@ -97,19 +106,18 @@ const Database = (() => {
         },
 
         /**
-         * Add a new category
+         * Add a new category with custom values
          */
-        addCategory(name) {
+        addCategory(name, values = null) {
+            const valuesToUse = values || customValues;
             const category = {
                 id: Utils.generateId(),
                 name: name,
-                questions: [
-                    { value: 100, question: '', answer: '' },
-                    { value: 200, question: '', answer: '' },
-                    { value: 300, question: '', answer: '' },
-                    { value: 400, question: '', answer: '' },
-                    { value: 500, question: '', answer: '' }
-                ]
+                questions: valuesToUse.map(value => ({
+                    value: value,
+                    question: '',
+                    answer: ''
+                }))
             };
             data.categories.push(category);
             saveData();
@@ -143,6 +151,24 @@ const Database = (() => {
         },
 
         /**
+         * Update a question's value
+         */
+        updateQuestionValue(categoryId, oldValue, newValue, question, answer) {
+            const category = data.categories.find(c => c.id === categoryId);
+            if (category) {
+                const questionIdx = category.questions.findIndex(q => q.value === oldValue);
+                if (questionIdx !== -1) {
+                    category.questions[questionIdx].value = newValue;
+                    category.questions[questionIdx].question = question;
+                    category.questions[questionIdx].answer = answer;
+                    saveData();
+                    return true;
+                }
+            }
+            return false;
+        },
+
+        /**
          * Update a question
          */
         updateQuestion(categoryId, value, question, answer) {
@@ -157,6 +183,31 @@ const Database = (() => {
                 }
             }
             return false;
+        },
+
+        /**
+         * Set custom values for new categories
+         */
+        setCustomValues(values) {
+            if (Array.isArray(values) && values.length > 0) {
+                customValues = values;
+                return true;
+            }
+            return false;
+        },
+
+        /**
+         * Get current custom values
+         */
+        getCustomValues() {
+            return [...customValues];
+        },
+
+        /**
+         * Get value presets
+         */
+        getValuePresets() {
+            return VALUE_PRESETS;
         },
 
         /**
@@ -244,6 +295,7 @@ const Database = (() => {
          */
         reset() {
             data = Utils.deepClone(DEFAULT_DATA);
+            customValues = VALUE_PRESETS.standard;
             saveData();
         },
 
